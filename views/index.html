@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Rent Predictor</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+</head>
+<body>
+
+<div class="overlay"></div>
+
+<div class="container">
+
+    <div class="left-panel">
+        <h1>🏠 {{ title }}</h1>
+        <p>
+            {{ description }}
+            Enter property details and get accurate estimates.
+        </p>
+
+        <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa"
+             alt="House">
+    </div>
+
+    <div class="form-card">
+
+        <h2>Property Details</h2>
+
+        <form action="/predict/" method="POST">
+            {% csrf_token %}
+
+            <input type="number" name="bhk" placeholder="BHK" value="{{ inputs.bhk }}" required>
+
+            <input type="number" name="size" placeholder="Size (Sqft)" value="{{ inputs.size }}" required>
+
+            <input type="number" name="bathroom" placeholder="Bathrooms" value="{{ inputs.bathroom }}" required>
+
+            <select name="floor">
+                {% for floor in floor_options %}
+                <option {% if inputs.floor == floor %}selected{% endif %}>{{ floor }}</option>
+                {% endfor %}
+            </select>
+ 
+            <select name="Area Type">
+                {% for area_type in area_types %}
+                <option {% if inputs.area_type == area_type %}selected{% endif %}>{{ area_type }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="city">
+                {% for city in cities %}
+                <option {% if inputs.city == city %}selected{% endif %}>{{ city }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="Furnishing Status">
+                {% for furnishing in furnishing_types %}
+                <option {% if inputs.furnishing == furnishing %}selected{% endif %}>{{ furnishing }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="Tenant Preferred">
+                {% for tenant in tenant_types %}
+                <option {% if inputs.tenant == tenant %}selected{% endif %}>{{ tenant }}</option>
+                {% endfor %}
+            </select>
+
+
+            <button type="submit">
+                Predict Rent
+            </button>
+
+        </form>
+
+        {% if show_result %}
+        <div class="result">
+            <h3>Predicted Rent</h3>
+            <p>₹ {{ prediction }}</p>
+        </div>
+        {% endif %}
+
+        {% if error %}
+        <div style="color: red; margin-top: 20px; text-align: center;">
+            <strong>Error:</strong> {{ error }}
+        </div>
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+</html>
